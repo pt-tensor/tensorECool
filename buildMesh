@@ -1,0 +1,60 @@
+#!/bin/bash
+set -euo pipefail
+cd "${0%/*}" || exit 1
+
+rm -rf 0 constant/polyMesh
+rm -rf constant/fluid/polyMesh constant/PCB/polyMesh constant/PBGA/polyMesh
+rm -rf constant/cellToRegion
+rm -rf processor* postProcessing
+for d in *; do
+    [ -d "$d" ] || continue
+    case "$d" in
+        0|0.orig|constant|system|Reports|scripts) continue ;;
+    esac
+    if [[ "$d" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+        rm -rf "$d"
+    fi
+done
+
+blockMesh 2>&1 | tee log.blockMesh
+
+topoSet 2>&1 | tee log.topoSet
+subsetMesh keepCells -overwrite -patch walls 2>&1 | tee log.subsetMesh
+
+topoSet -dict system/regionTopoSetDict 2>&1 | tee log.regionTopoSet
+
+rm -rf 0
+cp -r 0.orig 0
+
+splitMeshRegions -cellZones -overwrite 2>&1 | tee log.splitMeshRegions
+
+for region in PCB PBGA
+do
+    rm -f 0/$region/{U,p_rgh,alphat,nut,k,omega,gammaInt,ReThetat,rho}
+done
+
+for region in fluid PCB PBGA
+do
+    changeDictionary -region "$region" 2>&1 | tee log.changeDictionary.$region
+done
+
+# Drop leftover 0.orig ".*" calculated keys (shadow walls after decompose).
+for region in fluid PCB PBGA; do
+    [ -d "0/$region" ] || continue
+    for f in "0/$region"/*; do
+        [ -f "$f" ] || continue
+        sed -i '/^[[:space:]]*"\.\*"[[:space:]]*$/,/^[[:space:]]*}[[:space:]]*$/d' "$f"
+    done
+done
+
+# Die cellZone inside the PBGA region (heat source target).
+topoSet -region PBGA 2>&1 | tee log.topoSet.die
+
+# Uniform inlet (0 2.82 0) from changeDictionary — no FD profile.
+
+checkMesh -region fluid 2>&1 | tee log.checkMesh.fluid
+checkMesh -region PCB 2>&1 | tee log.checkMesh.PCB
+checkMesh -region PBGA 2>&1 | tee log.checkMesh.PBGA
+
+echo "CHT mesh ready. Regions: fluid, PCB, PBGA (die zone in PBGA)"
+echo "Xin = 100 mm, uniform inlet, side_posX=slip, kOmegaSST, anisotropic PCB, Q = 2.6 W"

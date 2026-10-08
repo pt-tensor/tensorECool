@@ -1,0 +1,19 @@
+#!/bin/bash
+set -euo pipefail
+cd "${0%/*}" || exit 1
+
+NP="${NP:-8}"
+
+if command -v foamDictionary >/dev/null 2>&1; then
+    foamDictionary system/controlDict -entry startFrom -set latestTime >/dev/null
+else
+    sed -i.bak -E 's/^startFrom[[:space:]]+[^;]+;/startFrom       latestTime;/' system/controlDict
+    rm -f system/controlDict.bak
+fi
+
+if [ "$NP" -gt 1 ]; then
+    mpirun -np "$NP" chtMultiRegionSimpleFoam -parallel 2>&1 | tee -a log.chtMultiRegionSimpleFoam
+    reconstructPar -allRegions -latestTime 2>&1 | tee -a log.reconstructPar
+else
+    chtMultiRegionSimpleFoam 2>&1 | tee -a log.chtMultiRegionSimpleFoam
+fi

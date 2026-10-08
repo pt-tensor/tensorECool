@@ -1,0 +1,330 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2406                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      changeDictionaryDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Explicit patch names required: changeDictionary merge does not expand
+// ".*" against the mesh when a leftover calculated ".*" key already exists
+// in 0.orig, and that leftover wins on walls after decomposePar.
+
+T
+{
+    internalField   uniform 300;
+    boundaryField
+    {
+        walls
+        {
+            type            zeroGradient;
+            value           uniform 300;
+        }
+        side_posX
+        {
+            type            zeroGradient;
+            value           uniform 300;
+        }
+        inlet
+        {
+            type            fixedValue;
+            value           uniform 300;
+        }
+        outlet
+        {
+            type            inletOutlet;
+            inletValue      uniform 300;
+            value           uniform 300;
+        }
+        fluid_to_PCB
+        {
+            type            compressible::turbulentTemperatureCoupledBaffleMixed;
+            Tnbr            T;
+            kappaMethod     fluidThermo;
+            value           uniform 300;
+        }
+        fluid_to_PBGA
+        {
+            type            compressible::turbulentTemperatureCoupledBaffleMixed;
+            Tnbr            T;
+            kappaMethod     fluidThermo;
+            value           uniform 300;
+        }
+    }
+}
+
+U
+{
+    internalField   uniform (0 0 0);
+    boundaryField
+    {
+        walls
+        {
+            type            noSlip;
+        }
+        side_posX
+        {
+            type            slip;
+        }
+        fluid_to_PCB
+        {
+            type            noSlip;
+        }
+        fluid_to_PBGA
+        {
+            type            noSlip;
+        }
+        inlet
+        {
+            type            fixedValue;
+            value           uniform (0 2.82 0);
+        }
+        outlet
+        {
+            type            pressureInletOutletVelocity;
+            value           uniform (0 0 0);
+        }
+    }
+}
+
+k
+{
+    internalField   uniform 0.03;
+    boundaryField
+    {
+        walls
+        {
+            type            kqRWallFunction;
+            value           uniform 0.03;
+        }
+        side_posX
+        {
+            type            zeroGradient;
+            value           uniform 0.03;
+        }
+        fluid_to_PCB
+        {
+            type            kqRWallFunction;
+            value           uniform 0.03;
+        }
+        fluid_to_PBGA
+        {
+            type            kqRWallFunction;
+            value           uniform 0.03;
+        }
+        inlet
+        {
+            type            fixedValue;
+            value           uniform 0.03;
+        }
+        outlet
+        {
+            type            inletOutlet;
+            inletValue      uniform 0.03;
+            value           uniform 0.03;
+        }
+    }
+}
+
+omega
+{
+    internalField   uniform 340;
+    boundaryField
+    {
+        walls
+        {
+            type            omegaWallFunction;
+            value           uniform 340;
+        }
+        side_posX
+        {
+            type            zeroGradient;
+            value           uniform 340;
+        }
+        fluid_to_PCB
+        {
+            type            omegaWallFunction;
+            value           uniform 340;
+        }
+        fluid_to_PBGA
+        {
+            type            omegaWallFunction;
+            value           uniform 340;
+        }
+        inlet
+        {
+            type            fixedValue;
+            value           uniform 340;
+        }
+        outlet
+        {
+            type            inletOutlet;
+            inletValue      uniform 340;
+            value           uniform 340;
+        }
+    }
+}
+
+p_rgh
+{
+    internalField   uniform 0;
+    boundaryField
+    {
+        walls
+        {
+            type            fixedFluxPressure;
+            value           uniform 0;
+        }
+        side_posX
+        {
+            type            fixedFluxPressure;
+            value           uniform 0;
+        }
+        fluid_to_PCB
+        {
+            type            fixedFluxPressure;
+            value           uniform 0;
+        }
+        fluid_to_PBGA
+        {
+            type            fixedFluxPressure;
+            value           uniform 0;
+        }
+        inlet
+        {
+            type            zeroGradient;
+        }
+        outlet
+        {
+            type            fixedValue;
+            value           uniform 0;
+        }
+    }
+}
+
+p
+{
+    internalField   uniform 0;
+    boundaryField
+    {
+        walls
+        {
+            type            calculated;
+            value           uniform 0;
+        }
+        side_posX
+        {
+            type            calculated;
+            value           uniform 0;
+        }
+        fluid_to_PCB
+        {
+            type            calculated;
+            value           uniform 0;
+        }
+        fluid_to_PBGA
+        {
+            type            calculated;
+            value           uniform 0;
+        }
+        inlet
+        {
+            type            calculated;
+            value           uniform 0;
+        }
+        outlet
+        {
+            type            calculated;
+            value           uniform 0;
+        }
+    }
+}
+
+alphat
+{
+    internalField   uniform 0;
+    boundaryField
+    {
+        walls
+        {
+            type            compressible::alphatWallFunction;
+            Prt             0.85;
+            value           uniform 0;
+        }
+        side_posX
+        {
+            type            calculated;
+            value           uniform 0;
+        }
+        fluid_to_PCB
+        {
+            type            compressible::alphatWallFunction;
+            Prt             0.85;
+            value           uniform 0;
+        }
+        fluid_to_PBGA
+        {
+            type            compressible::alphatWallFunction;
+            Prt             0.85;
+            value           uniform 0;
+        }
+        inlet
+        {
+            type            calculated;
+            value           uniform 0;
+        }
+        outlet
+        {
+            type            calculated;
+            value           uniform 0;
+        }
+    }
+}
+
+nut
+{
+    internalField   uniform 0;
+    boundaryField
+    {
+        walls
+        {
+            type            nutkWallFunction;
+            value           uniform 0;
+        }
+        side_posX
+        {
+            type            calculated;
+            value           uniform 0;
+        }
+        fluid_to_PCB
+        {
+            type            nutkWallFunction;
+            value           uniform 0;
+        }
+        fluid_to_PBGA
+        {
+            type            nutkWallFunction;
+            value           uniform 0;
+        }
+        inlet
+        {
+            type            calculated;
+            value           uniform 0;
+        }
+        outlet
+        {
+            type            calculated;
+            value           uniform 0;
+        }
+    }
+}
+
+// ************************************************************************* //

@@ -1,0 +1,88 @@
+#!/bin/bash
+# Sample PIV lines in the fluid region, compare to experiment, report PBGA ΔT.
+# Safe to call mid-run: reconstructs -latestTime from processor* if needed.
+set -euo pipefail
+cd "${0%/*}" || exit 1
+CASE="$(pwd)"
+
+REPO="$CASE"
+while [ "$REPO" != "/" ] && [ ! -f "$REPO/openfoam-docker" ]; do
+    REPO="$(dirname "$REPO")"
+done
+if [ ! -f "$REPO/openfoam-docker" ]; then
+    echo "WARNING: could not locate repo root (openfoam-docker)"
+    REPO="$(cd "$CASE"/../../../../.. && pwd)"
+fi
+CASE_REL="${CASE#"$REPO"/}"
+
+of_run() {
+    local cmd="$1"
+    if command -v chtMultiRegionSimpleFoam >/dev/null 2>&1; then
+        eval "$cmd"
+        return
+    fi
+    docker run --rm --user="$(id -u):$(id -g)" \
+        --volume="${REPO}:/home/openfoam" \
+        opencfd/openfoam-run:latest \
+        bash -lc "cd /home/openfoam/${CASE_REL} && ${cmd}"
+}
+
+if [ ! -d constant/fluid/polyMesh ]; then
+    echo "No CHT mesh — run ./buildMesh first"
+    exit 1
+fi
+
+has_serial=0
+for d in "$CASE"/*; do
+    [ -d "$d" ] || continue
+    base="$(basename "$d")"
+    case "$base" in
+        0|0.orig|constant|system|Reports|scripts|processor*) continue ;;
+    esac
+    if [[ "$base" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+        has_serial=1
+        break
+    fi
+done
+
+has_proc=0
+if compgen -G "$CASE/processor*/[1-9]*" > /dev/null 2>&1 || \
+   compgen -G "$CASE/processor*/[1-9][0-9]*" > /dev/null 2>&1; then
+    has_proc=1
+fi
+
+if [ "$has_serial" -ne 1 ] && [ "$has_proc" -ne 1 ]; then
+    echo "No CFD result time folders found. Run ./Run first."
+    exit 1
+fi
+
+if [ "$has_proc" -eq 1 ]; then
+    echo "==> reconstructPar -allRegions -latestTime (for Reports)"
+    of_run "reconstructPar -allRegions -latestTime" 2>&1 | tee -a log.reconstructPar.watch
+fi
+
+echo "==> Sampling validation lines (OpenFOAM -postProcess, fluid)"
+of_run "chtMultiRegionSimpleFoam -postProcess -latestTime -region fluid" \
+    2>&1 | tee log.postProcess
+
+PY="${CASE}/.venv/bin/python"
+if [ ! -x "$PY" ]; then
+    python3 -m venv .venv
+    .venv/bin/pip install -q matplotlib numpy
+    PY="${CASE}/.venv/bin/python"
+fi
+
+echo "==> Comparing CFD to PIV"
+"$PY" Reports/scripts/validate_vs_experiment.py --skip-sample "$@"
+
+echo "==> Writing validation SVGs"
+"$PY" Reports/scripts/make_validation_svgs.py
+
+echo "==> Residuals, ΔT history, Vave history"
+"$PY" Reports/scripts/make_history_svgs.py
+
+echo "==> PBGA ΔT"
+"$PY" Reports/scripts/report_deltaT.py
+
+echo ""
+echo "Done. Open Reports/validation_report.md"

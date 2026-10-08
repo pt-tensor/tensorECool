@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="420" viewBox="0 0 820 420" role="img" aria-label="Xin100 — PBGA temperature rise vs iteration">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="410.0" y="26" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#111">Xin100 — PBGA temperature rise vs iteration</text>
+<line x1="72" y1="44" x2="72" y2="368" stroke="#333" stroke-width="1.2"/>
+<line x1="72" y1="368" x2="792" y2="368" stroke="#333" stroke-width="1.2"/>
+<text x="36" y="206.0" text-anchor="middle" transform="rotate(-90 36 206.0)" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#444">ΔT [K]</text>
+<text x="432.0" y="406" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#444">iteration</text>
+<line x1="145.85" y1="44" x2="145.85" y2="368" stroke="#eee" stroke-width="1"/>
+<text x="145.85" y="384" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555">500</text>
+<line x1="238.15" y1="44" x2="238.15" y2="368" stroke="#eee" stroke-width="1"/>
+<text x="238.15" y="384" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555">1000</text>
+<line x1="330.46" y1="44" x2="330.46" y2="368" stroke="#eee" stroke-width="1"/>
+<text x="330.46" y="384" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555">1500</text>
+<line x1="422.77" y1="44" x2="422.77" y2="368" stroke="#eee" stroke-width="1"/>
+<text x="422.77" y="384" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555">2000</text>
+<line x1="515.08" y1="44" x2="515.08" y2="368" stroke="#eee" stroke-width="1"/>
+<text x="515.08" y="384" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555">2500</text>
+<line x1="607.38" y1="44" x2="607.38" y2="368" stroke="#eee" stroke-width="1"/>
+<text x="607.38" y="384" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555">3000</text>
+<line x1="699.69" y1="44" x2="699.69" y2="368" stroke="#eee" stroke-width="1"/>
+<text x="699.69" y="384" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555">3500</text>
+<line x1="792.00" y1="44" x2="792.00" y2="368" stroke="#eee" stroke-width="1"/>
+<text x="792.00" y="384" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555">4000</text>
+<line x1="72" y1="368.00" x2="792" y2="368.00" stroke="#eee" stroke-width="1"/>
+<text x="64" y="371.00" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555">0</text>
+<line x1="72" y1="265.50" x2="792" y2="265.50" stroke="#eee" stroke-width="1"/>
+<text x="64" y="268.50" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555">10</text>
+<line x1="72" y1="163.00" x2="792" y2="163.00" stroke="#eee" stroke-width="1"/>
+<text x="64" y="166.00" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555">20</text>
+<line x1="72" y1="60.50" x2="792" y2="60.50" stroke="#eee" stroke-width="1"/>
+<text x="64" y="63.50" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555">30</text>
+<line x1="72" y1="68.00" x2="792" y2="68.00" stroke="#2c3e50" stroke-width="1.6" stroke-dasharray="8 5" opacity="0.9"/>
+<text x="788.0" y="63.00" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#2c3e50">target (exp): 29.27 K</text>
+<path d="M72.00,269.85 L90.46,230.20 L108.92,211.36 L127.38,203.15 L145.85,199.29 L164.31,193.44 L182.77,186.36 L201.23,179.62 L219.69,174.25 L238.15,169.97 L256.62,166.88 L275.08,164.43 L293.54,162.56 L312.00,161.15 L330.46,160.17 L348.92,159.56 L367.38,159.04 L385.85,158.60 L404.31,158.21 L422.77,157.98 L441.23,157.64 L459.69,157.51 L478.15,157.22 L496.62,157.05 L515.08,156.89 L533.54,156.76 L552.00,156.59 L570.46,156.44 L588.92,156.34 L607.38,156.09 L625.85,156.00 L644.31,155.81 L662.77,155.80 L681.23,155.68 L699.69,155.63 L718.15,155.52 L736.62,155.44 L755.08,155.27 L773.54,155.17 L792.00,155.09" fill="none" stroke="#c0392b" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="220" viewBox="0 0 420 220" role="img" aria-label="PBGA temperature rise Xin=100 mm">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="210.0" y="24" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#111">PBGA temperature rise — Xin=100 mm</text>
+<text x="210" y="52" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#555">ΔT [K]</text>
+<rect x="130.0" y="102.0" width="54" height="88.0" fill="#111111"/>
+<text x="157.0" y="96.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#222">29.27</text>
+<text x="157.0" y="206.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555">exp</text>
+<rect x="210.0" y="127.5" width="54" height="62.5" fill="#c0392b"/>
+<text x="237.0" y="121.5" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#222">20.77</text>
+<text x="237.0" y="206.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555">CFD</text>
+<text x="210" y="226.0" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#333">rel. error -29.0 %</text>
+</svg>

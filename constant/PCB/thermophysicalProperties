@@ -1,0 +1,65 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2406                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      thermophysicalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Multilayer PCB: mild in-plane vs through-thickness anisotropy.
+// κ_xy=40 turned the board into a heatsink (package ΔT collapsed to ~1 K
+// while PCB rose only ~0.03 K). Use sparse-Cu effective values instead.
+thermoType
+{
+    type            heSolidThermo;
+    mixture         pureMixture;
+    transport       constAnIso;
+    thermo          hConst;
+    equationOfState rhoConst;
+    specie          specie;
+    energy          sensibleEnthalpy;
+}
+
+coordinateSystem
+{
+    type            cartesian;
+    origin          (0 0 0);
+    rotation
+    {
+        type        axesRotation;
+        e1          (1 0 0);
+        e2          (0 1 0);
+    }
+}
+
+mixture
+{
+    specie
+    {
+        molWeight       50;
+    }
+    transport
+    {
+        // kappa (k_e1 k_e2 k_e3) [W/m/K] = (kx ky kz)
+        kappa           (2 2 0.35);
+    }
+    thermodynamics
+    {
+        Hf              0;
+        Cp              1150;
+    }
+    equationOfState
+    {
+        rho             1850;
+    }
+}
+
+// ************************************************************************* //

@@ -1,0 +1,57 @@
+#!/bin/bash
+set -euo pipefail
+cd "${0%/*}" || exit 1
+CASE="$(pwd)"
+CHT="$(cd .. && pwd)"
+
+if [ ! -d constant/fluid/polyMesh ]; then
+    echo "No CHT mesh — run ./buildMesh first"
+    exit 1
+fi
+
+if [ ! -d 0/fluid ]; then
+    echo "ERROR: multi-region 0/fluid missing — run ./cleanResults (in OpenFOAM env) or ./buildMesh"
+    exit 1
+fi
+if [ ! -f 0/fluid/p ]; then
+    echo "ERROR: 0/fluid/p missing — run ./cleanResults inside docker"
+    exit 1
+fi
+if [ ! -f 0/PCB/p ] || [ ! -f 0/PBGA/p ]; then
+    echo "ERROR: solid 0/PCB/p or 0/PBGA/p missing (heSolidThermo needs p) — run ./cleanResults in docker"
+    exit 1
+fi
+
+# Host SVG watcher (HVAC-style): refresh Reports every 100 iterations from
+# log + postProcessing. Disable with SVG_WATCH=0.
+# Inside docker this only prints a reminder — start the watcher on the Mac host
+# (./ensure-svg-watch --background), or relaunch ./openfoam-docker from the repo.
+if [ "${SVG_WATCH:-1}" != "0" ] && [ -x "$CHT/ensure-svg-watch" ]; then
+    "$CHT/ensure-svg-watch" --background || true
+fi
+
+NP="${NP:-8}"
+
+if [ "$NP" -gt 1 ]; then
+    decomposePar -allRegions -force 2>&1 | tee log.decomposePar
+    if [ ! -f processor0/0/fluid/p ]; then
+        echo "ERROR: decomposePar did not write processor0/0/fluid/p — abort before mpirun"
+        exit 1
+    fi
+    mpirun -np "$NP" chtMultiRegionSimpleFoam -parallel 2>&1 | tee log.chtMultiRegionSimpleFoam
+    reconstructPar -allRegions 2>&1 | tee log.reconstructPar
+else
+    chtMultiRegionSimpleFoam 2>&1 | tee log.chtMultiRegionSimpleFoam
+fi
+
+if [ "${SVG_WATCH:-1}" != "0" ] && [ -f "$CHT/Reports/scripts/update_live_svgs.py" ]; then
+    PY=""
+    if [ -x "$CASE/.venv/bin/python" ]; then
+        PY="$CASE/.venv/bin/python"
+    elif command -v python3 >/dev/null 2>&1 && [ ! -f /.dockerenv ]; then
+        PY="python3"
+    fi
+    if [ -n "$PY" ]; then
+        "$PY" "$CHT/Reports/scripts/update_live_svgs.py" "$(basename "$CASE")" --force || true
+    fi
+fi

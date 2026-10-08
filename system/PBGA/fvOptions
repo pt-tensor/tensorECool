@@ -1,0 +1,36 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2406                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvOptions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+electronicsPower
+{
+    // specific [W/m3] + explicit/implicit (OF2512-safe). 2.6 W / V_PBGA.
+    type            scalarSemiImplicitSource;
+    active          true;
+
+    selectionMode   all;
+    volumeMode      specific;
+
+    sources
+    {
+        h
+        {
+            explicit    509263.4;
+            implicit    0;
+        }
+    }
+}
+
+// ************************************************************************* //

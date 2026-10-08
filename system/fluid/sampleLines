@@ -1,0 +1,94 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2406                                 |
+\*---------------------------------------------------------------------------*/
+
+validationLines
+{
+    type            sets;
+    libs            (sampling);
+    region          fluid;
+    writeControl    writeTime;
+    writeInterval   1;
+
+    interpolationScheme cellPoint;
+    setFormat       raw;
+
+    fields          (U T);
+
+    sets
+    {
+        line_Uy_Y60
+        {
+            type            uniform;
+            axis            x;
+            start           (0.040 0.060 0.007);
+            end             (0.160 0.060 0.007);
+            nPoints         121;
+        }
+        line_Uy_Y80
+        {
+            type            uniform;
+            axis            x;
+            start           (0.040 0.080 0.007);
+            end             (0.160 0.080 0.007);
+            nPoints         121;
+        }
+        line_Uy_Y100
+        {
+            type            uniform;
+            axis            x;
+            start           (0.040 0.100 0.007);
+            end             (0.160 0.100 0.007);
+            nPoints         121;
+        }
+        line_Uy_Y120
+        {
+            type            uniform;
+            axis            x;
+            start           (0.040 0.120 0.007);
+            end             (0.160 0.120 0.007);
+            nPoints         121;
+        }
+        line_Uy_Y140
+        {
+            type            uniform;
+            axis            x;
+            start           (0.040 0.140 0.007);
+            end             (0.160 0.140 0.007);
+            nPoints         121;
+        }
+    }
+}
+
+pivPlane
+{
+    type            surfaces;
+    libs            (sampling);
+    region          fluid;
+    writeControl    writeTime;
+    writeInterval   1;
+
+    interpolationScheme cellPoint;
+    surfaceFormat   vtk;
+
+    fields          (U T);
+
+    surfaces
+    {
+        z7mm
+        {
+            type            cuttingPlane;
+            planeType       pointAndNormal;
+            pointAndNormalDict
+            {
+                point   (0.100 0.100 0.007);
+                normal  (0 0 1);
+            }
+            interpolate     true;
+        }
+    }
+}
+
+// ************************************************************************* //

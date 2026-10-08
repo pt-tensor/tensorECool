@@ -1,0 +1,171 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2512                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+FoamFile
+{
+    version         2;
+    format          ascii;
+    class           dictionary;
+    object          controlDict;
+}
+
+application     chtMultiRegionSimpleFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         4000;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   100;
+
+purgeWrite      2;
+
+writeFormat     ascii;
+
+writePrecision  8;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+functions
+{
+    packageT
+    {
+        type            volFieldValue;
+        libs            ( fieldFunctionObjects );
+        region          PBGA;
+        writeControl    timeStep;
+        writeInterval   100;
+        writeFields     false;
+        log             true;
+        operation       volAverage;
+        fields          ( T );
+    }
+    dieT
+    {
+        type            volFieldValue;
+        libs            ( fieldFunctionObjects );
+        region          PBGA;
+        writeControl    timeStep;
+        writeInterval   100;
+        writeFields     false;
+        log             false;
+        operation       volAverage;
+        regionType      cellZone;
+        name            die;
+        fields          ( T );
+    }
+    inletT
+    {
+        type            surfaceFieldValue;
+        libs            ( fieldFunctionObjects );
+        region          fluid;
+        writeControl    timeStep;
+        writeInterval   100;
+        writeFields     false;
+        log             true;
+        regionType      patch;
+        name            inlet;
+        operation       areaAverage;
+        fields          ( T );
+    }
+    validationLines
+    {
+        type            sets;
+        libs            ( sampling );
+        region          fluid;
+        writeControl    writeTime;
+        writeInterval   1;
+        interpolationScheme cellPoint;
+        setFormat       raw;
+        fields          ( U T );
+        sets
+        {
+            line_Uy_Y60
+            {
+                type            uniform;
+                axis            x;
+                start           ( 0.04 0.06 0.007 );
+                end             ( 0.16 0.06 0.007 );
+                nPoints         121;
+            }
+            line_Uy_Y80
+            {
+                type            uniform;
+                axis            x;
+                start           ( 0.04 0.08 0.007 );
+                end             ( 0.16 0.08 0.007 );
+                nPoints         121;
+            }
+            line_Uy_Y100
+            {
+                type            uniform;
+                axis            x;
+                start           ( 0.04 0.1 0.007 );
+                end             ( 0.16 0.1 0.007 );
+                nPoints         121;
+            }
+            line_Uy_Y120
+            {
+                type            uniform;
+                axis            x;
+                start           ( 0.04 0.12 0.007 );
+                end             ( 0.16 0.12 0.007 );
+                nPoints         121;
+            }
+            line_Uy_Y140
+            {
+                type            uniform;
+                axis            x;
+                start           ( 0.04 0.14 0.007 );
+                end             ( 0.16 0.14 0.007 );
+                nPoints         121;
+            }
+        }
+    }
+    pivPlane
+    {
+        type            surfaces;
+        libs            ( sampling );
+        region          fluid;
+        writeControl    writeTime;
+        writeInterval   1;
+        interpolationScheme cellPoint;
+        surfaceFormat   vtk;
+        fields          ( U T );
+        surfaces
+        {
+            z7mm
+            {
+                type            cuttingPlane;
+                planeType       pointAndNormal;
+                pointAndNormalDict
+                {
+                    point           ( 0.1 0.1 0.007 );
+                    normal          ( 0 0 1 );
+                }
+                interpolate     true;
+            }
+        }
+    }
+}
+
+
+// ************************************************************************* //

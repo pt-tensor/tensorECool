@@ -1,0 +1,188 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2406                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Dummies / islands to remove. PCB and PBGA stay as CHT solids.
+// Xin = 100 mm: inlet x = 0.090 .. 0.110 m.
+
+actions
+(
+    // inlet-stub left
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  new;
+        source  boxToCell;
+        box     (-1e-6 -0.021 -1e-6) (0.090 1e-6 0.011);
+    }
+    // inlet-stub right
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.110 -0.021 -1e-6) (0.201 1e-6 0.011);
+    }
+    // chimney left of openings
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (-1e-6 0.235 -1e-6) (0.062 0.258 0.011);
+    }
+    // chimney left finger
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.084 0.235 -1e-6) (0.089 0.258 0.011);
+    }
+    // chimney right finger
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.111 0.235 -1e-6) (0.116 0.258 0.011);
+    }
+    // chimney right of openings
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.138 0.235 -1e-6) (0.201 0.258 0.011);
+    }
+    // outlet left Z-wall low
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.062 0.235 -1e-6) (0.084 0.258 0.0025);
+    }
+    // outlet left Z-wall high
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.062 0.235 0.0075) (0.084 0.258 0.011);
+    }
+    // outlet mid Z-wall low
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.089 0.235 -1e-6) (0.111 0.258 0.0025);
+    }
+    // outlet mid Z-wall high
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.089 0.235 0.0075) (0.111 0.258 0.011);
+    }
+    // outlet right Z-wall low
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.116 0.235 -1e-6) (0.138 0.258 0.0025);
+    }
+    // outlet right Z-wall high
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.116 0.235 0.0075) (0.138 0.258 0.011);
+    }
+    // left polystyrene dummy
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (-1e-6 -1e-6 -1e-6) (0.040 0.235 0.011);
+    }
+    // bottom dummy left of inlet
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.040 -1e-6 -1e-6) (0.090 0.040 0.011);
+    }
+    // bottom dummy right of inlet
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.110 -1e-6 -1e-6) (0.200 0.040 0.011);
+    }
+    // left L-island wide
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.052 0.160 -1e-6) (0.089 0.200 0.011);
+    }
+    // left L-island finger
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.084 0.200 -1e-6) (0.089 0.235 0.011);
+    }
+    // right L-island wide
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.111 0.160 -1e-6) (0.148 0.200 0.011);
+    }
+    // right L-island finger
+    {
+        name    dummyCells;
+        type    cellSet;
+        action  add;
+        source  boxToCell;
+        box     (0.111 0.200 -1e-6) (0.116 0.235 0.011);
+    }
+    {
+        name    keepCells;
+        type    cellSet;
+        action  new;
+        source  cellToCell;
+        set     dummyCells;
+    }
+    {
+        name    keepCells;
+        type    cellSet;
+        action  invert;
+    }
+);
+
+// ************************************************************************* //

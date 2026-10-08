@@ -1,0 +1,64 @@
+#!/bin/bash
+# Remove solver results but keep region meshes. Rebuild multi-region 0/
+# (0.orig is flat placeholders — NOT a drop-in for 0/fluid, 0/PCB, 0/PBGA).
+cd "${0%/*}" || exit 1
+
+foamListTimes -rm 2>/dev/null || true
+rm -rf processor* postProcessing VTK
+rm -f log.* *.foam
+
+if [ ! -d constant/fluid/polyMesh ]; then
+    rm -rf 0
+    cp -r 0.orig 0
+    echo "No region mesh — restored flat 0/ from 0.orig. Run ./buildMesh next."
+    exit 0
+fi
+
+rm -rf 0
+mkdir -p 0/fluid 0/PCB 0/PBGA
+for f in 0.orig/*; do
+    [ -f "$f" ] || continue
+    cp "$f" 0/fluid/
+    cp "$f" 0/PCB/
+    cp "$f" 0/PBGA/
+done
+# Solids need T + p (rhoConst); drop unused fluid momentum/turbulence fields
+rm -f 0/PCB/{U,p_rgh,alphat,nut,k,omega,gammaInt,ReThetat,rho}
+rm -f 0/PBGA/{U,p_rgh,alphat,nut,k,omega,gammaInt,ReThetat,rho}
+
+if ! command -v changeDictionary >/dev/null 2>&1; then
+    echo "OpenFOAM not in PATH — region 0/ placeholders copied."
+    echo "In docker run:"
+    echo "  for r in fluid PCB PBGA; do changeDictionary -region \$r; done"
+    echo "  # then on host: python3 scripts/set_inlet_profile.py"
+    exit 0
+fi
+
+for region in fluid PCB PBGA; do
+    changeDictionary -region "$region"
+done
+
+# Drop leftover 0.orig ".*" calculated keys so they cannot shadow walls.
+# (Docker often has no python3 — use sed.)
+for region in fluid PCB PBGA; do
+    [ -d "0/$region" ] || continue
+    for f in "0/$region"/*; do
+        [ -f "$f" ] || continue
+        sed -i '/^[[:space:]]*"\.\*"[[:space:]]*$/,/^[[:space:]]*}[[:space:]]*$/d' "$f"
+    done
+done
+
+if [ ! -f 0/fluid/p ]; then
+    echo "ERROR: 0/fluid/p missing after changeDictionary — abort"
+    exit 1
+fi
+if ! grep -q 'type[[:space:]]*noSlip' 0/fluid/U; then
+    echo "ERROR: 0/fluid/U walls not noSlip after changeDictionary — abort"
+    exit 1
+fi
+if grep -q '"[.][*]"' 0/fluid/U; then
+    echo "ERROR: leftover wildcard BC still in 0/fluid/U — abort"
+    exit 1
+fi
+
+echo "Cleaned results; restored multi-region 0/ (mesh kept, uniform inlet)"
